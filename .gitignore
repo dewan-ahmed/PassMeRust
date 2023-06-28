@@ -1,1 +1,13 @@
-/target
+# Generated files
+target/
+Cargo.lock
+
+# Editor and IDE files
+.vscode/
+.idea/
+
+# Build artifacts
+*.rs.bk
+
+# Dependency directories
+/vendor/
