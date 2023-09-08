@@ -4,6 +4,9 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::process;
 
+// Importing the entropy module
+mod entropy;
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let mut password = String::new();
@@ -32,8 +35,9 @@ fn main() {
     if is_password_in_dictionary(password, dictionary_path) || is_password_common(password, common_passwords_path) {
         println!("Password is weak: It matches a common password or dictionary word.");
     } else {
-        let entropy = calculate_entropy(password);
-        println!("Password strength: {}", get_strength(entropy));
+        // Use the imported calculate_entropy function
+        let entropy = entropy::calculate_entropy(password);
+        println!("Password strength: {}", entropy::get_strength(entropy)); // Update get_strength function as well.
     }
 }
 
@@ -45,24 +49,4 @@ fn is_password_in_dictionary(password: &str, dictionary_path: &Path) -> bool {
 fn is_password_common(password: &str, common_passwords_path: &Path) -> bool {
     let common_passwords = fs::read_to_string(common_passwords_path).unwrap();
     common_passwords.lines().any(|line| line == password)
-}
-
-fn calculate_entropy(password: &str) -> f64 {
-    let length = password.chars().count();
-    let range = password.chars().collect::<std::collections::HashSet<char>>().len();
-    length as f64 * (range as f64).log2()
-}
-
-fn get_strength(entropy: f64) -> &'static str {
-    if entropy < 28.0 {
-        "Very weak"
-    } else if entropy < 36.0 {
-        "Weak"
-    } else if entropy < 60.0 {
-        "Reasonable"
-    } else if entropy < 128.0 {
-        "Strong"
-    } else {
-        "Very strong"
-    }
 }
